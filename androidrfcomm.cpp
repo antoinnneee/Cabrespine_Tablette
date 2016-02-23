@@ -73,6 +73,15 @@ bool AndroidRfComm::isEnabled() {
     }
     return enabled;
 }
+void    AndroidRfComm::mycheck()
+{
+
+//    jboolean enabled=adapter.callMethod<jboolean>("isEnabled");
+
+    jint state=adapter.callMethod<jint>("getProfileConnectionState");
+    check("BluetoothAdapter.getState()");
+    check("BluetoothAdapter.getProfileConnectionState()");
+}
 
 QMap<QString,QString> AndroidRfComm::getPairedDevices() {
     QMap<QString,QString> result;

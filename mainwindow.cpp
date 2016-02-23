@@ -43,11 +43,9 @@ ui(new Ui::MainWindow)
     QTimer::singleShot(600, this, SLOT(TimeToInit()));
     connect(this, SIGNAL(RfcomResult(QString)), this, SLOT(toldmewhatIshoulddo(QString)));
     connect(ScanTime, SIGNAL(timeout()), this, SLOT(PingTest()));
-    connect(&client, SIGNAL(newMessage(QString,QString)),
-            this, SLOT(appendMessage(QString,QString)));
+    connect(&client, SIGNAL(newMessage(QString,QString)),this, SLOT(appendMessage(QString,QString)));
     connect(ScanTime2, SIGNAL(timeout()), this, SLOT(PingTest()));
     connect(BACKGROUNDSOUND, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)),this ,SLOT(BGamb(QMediaPlayer::MediaStatus)));
-
     Timer_reception_PC();
     sendping();
     myNickName = client.nickName();
@@ -84,10 +82,14 @@ void MainWindow::ping()
 {
     BACKGROUNDSOUND->setMedia(QUrl::fromLocalFile(GENERALPATH + "son/void.mp3"));
     BACKGROUNDSOUND->play();
-    if (ACTIF)
+    if (1)
     {
         nbrping++;
-        if (nbrping >= 200)
+        if (nbrping % 2 == 0)
+            ui->pushButton_8->show();
+        else
+            ui->pushButton_8->hide();
+        if (nbrping >= 60)
         {
             nbrping = 0;
             RfcommReload();
@@ -99,7 +101,7 @@ void MainWindow::ping()
         else if (PingState == 0)
         {
             qDebug()<< "WIFI ON";
-            QProcess::execute("svc wifi enable");
+//            QProcess::execute("svc wifi enable");
         }
         ScanTime->start(8000);
     }
@@ -124,7 +126,7 @@ void MainWindow::PingTest()
         if (PingState == 0)
         {
                     qDebug()<< "WIFI OFF";
-                    QProcess::execute("svc wifi disable");
+//                    QProcess::execute("svc wifi disable");
         }
 
         i = qrand() % ((3000) - 1000) + 1001;
@@ -209,12 +211,7 @@ void MainWindow::appendMessage(const QString &from, const QString &message)
                     rfcomm -> sendLine("$G" + message.mid(2,2) );
                  }
             }
-
         }
-    }
-    else
-    {
-        QProcess::execute("svc wifi disable");
     }
 }
 
@@ -329,7 +326,7 @@ void MainWindow::TimeToInit() // INITIALISATION
     ui->verticalSpacer_3->changeSize(widthP*1,heightP * 15,QSizePolicy::Maximum,QSizePolicy::Maximum);
     WIFISTATE = 0;
     LastDevice = "0";
-    QProcess::execute("svc wifi disable");
+//    QProcess::execute("svc wifi disable");
     InitMyButton();
  //ui->list->hide();
     ping();
@@ -337,15 +334,38 @@ void MainWindow::TimeToInit() // INITIALISATION
 
 void MainWindow::RfcommReload()
 {
+    nbrping = 0;
     qDebug() << " try rfcomm";
-        rfcomm->disconnect();
-        if(!rfcomm->isConnected())
-        rfcomm->connect(DeviceRfcomm);
+//    if (rfcomm->available())
+    rfcomm->disconnect();
+    QThread::msleep(SLEEPRFCOMM - 20);
+
+   //check("BluetoothAdapter.getState()");
+    rfcomm->disconnect();
+    QThread::msleep(SLEEPRFCOMM - 20);
+
+    QString error = QString::number(rfcomm->available());
+        qDebug() << error;
+
+            qDebug() << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nAAAAAAAAAAAAAAAAAAAAAAAAA";
+            if (rfcomm->isEnabled())
+                rfcomm->connect(DeviceRfcomm);
+            //            QThread::msleep(SLEEPRFCOMM);
+
 }
 
 /**********************reception rfcomm regulierement *****************/
 void MainWindow::itstime()
 {
+    nbrping++;
+    if (nbrping % 2 == 0)
+    {
+        ui->pushButton_8->show();
+    }
+    else
+        ui->pushButton_8->hide();
+    if (nbrping >= 60)
+        RfcommReload();
     qDebug() << "RECEIVE";
     QString Com = rfcomm->receiveLine(100,0);
     if (!Com.isEmpty())
@@ -457,8 +477,10 @@ void MainWindow::InitMyButton()
         ui->centralWidget->setStyleSheet("background-image: url(" + GENERALPATH + "img/f.png);""background-repeat: no-repeat;""background-position: center; ");
     //Bouton 1
     QFile fichier(GENERALPATH + "img/1.png");
-    if(fichier.exists())
+    if(fichier.exists()){
+        ui->pushButton_8->setStyleSheet("background-image: url(" + GENERALPATH + "img/1.png);""background-position: left; "); // morceaux de drapeau sur le bouton clignotant (clignote avec le rfcomm)
         ui->pushButton->setStyleSheet("background-image: url(" + GENERALPATH + "img/1.png);""background-repeat: no-repeat;""background-position: center; ");
+    }
     //Bouton2
     QFile fichier1(GENERALPATH + "img/2.png");
     if(fichier1.exists())

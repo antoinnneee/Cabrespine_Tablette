@@ -134,7 +134,7 @@ public:
      */
     void disconnect();
 
-
+    void mycheck();
 private:
 
     /** JNI Environment */

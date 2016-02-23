@@ -62,8 +62,7 @@ Connection::Connection(QObject *parent)
     QObject::connect(this, SIGNAL(readyRead()), this, SLOT(processReadyRead()));
     QObject::connect(this, SIGNAL(disconnected()), &pingTimer, SLOT(stop()));
     QObject::connect(&pingTimer, SIGNAL(timeout()), this, SLOT(sendPing()));
-    QObject::connect(this, SIGNAL(connected()),
-                     this, SLOT(sendGreetingMessage()));
+    QObject::connect(this, SIGNAL(connected()),this, SLOT(sendGreetingMessage()));
 }
 
 QString Connection::name() const
