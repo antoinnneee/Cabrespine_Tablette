@@ -11,6 +11,8 @@
 #include <QtConcurrent>
 QT_USE_NAMESPACE
 
+#define SLEEPRFCOMM 100
+
 namespace Ui {
 class MainWindow;
 }
@@ -78,6 +80,7 @@ private:
     QTimer *ScanTime;
     QTimer *ScanTime2;
     QTimer *ScanTime3;
+    QTimer *ScanTime4;
     QMediaPlayer *player;
     QMediaPlayer *BACKGROUNDSOUND;
     float height;

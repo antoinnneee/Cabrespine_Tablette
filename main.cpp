@@ -3,14 +3,20 @@
 #include <androidrfcomm.h>
 #include <QtCore/QSettings>
 #include <QThread>
+#include <QTime>
 #include <QtNetwork/QNetworkConfigurationManager>
 #include <QtNetwork/QNetworkSession>
-
+#include <QBluetoothLocalDevice>
 int main(int argc, char *argv[])
 {
     QApplication    app(argc, argv);
-
+QBluetoothLocalDevice localDevice;
     //  ==========================================================================
+      QProcess::execute("svc wifi enable"); // force wifi on on reset
+      localDevice.powerOn();                // force bluetooth on reset
+      QTime tempo;
+          tempo.start();
+          while (tempo.elapsed() < 8000); // tempo
         QNetworkConfigurationManager manager;
         if (manager.capabilities() & QNetworkConfigurationManager::NetworkSessionRequired) {
             // Get saved network configuration
@@ -21,8 +27,7 @@ int main(int argc, char *argv[])
 
             // If the saved network configuration is not currently discovered use the system default
             QNetworkConfiguration config = manager.configurationFromIdentifier(id);
-            if ((config.state() & QNetworkConfiguration::Discovered) !=
-                QNetworkConfiguration::Discovered) {
+            if ((config.state() & QNetworkConfiguration::Discovered) != QNetworkConfiguration::Discovered) {
                 config = manager.defaultConfiguration();
             }
 
