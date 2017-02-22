@@ -40,6 +40,7 @@ ui(new Ui::MainWindow)
     connect(ScanTime3,SIGNAL(timeout()),this, SLOT(sendping()));
     BACKGROUNDSOUND = new QMediaPlayer;
     BACKGROUNDSOUND->setMedia(QUrl::fromLocalFile(GENERALPATH + "son/void.mp3"));
+
     QTimer::singleShot(600, this, SLOT(TimeToInit()));
     connect(this, SIGNAL(RfcomResult(QString)), this, SLOT(toldmewhatIshoulddo(QString)));
     connect(ScanTime, SIGNAL(timeout()), this, SLOT(PingTest()));
@@ -304,6 +305,18 @@ void MainWindow::TimeToInit() // INITIALISATION
        IDGROUPE = flux.readLine();
     }
     fichier.close();
+    QFile fichierBK(GENERALPATH + "noblank");
+    if(fichierBK.exists())
+        TYPE = 1;
+    else
+        TYPE = 0;
+    fichierBK.close();
+
+
+    QFile fichier4(GENERALPATH + "img/5.png");
+    if(fichier4.exists())
+        ui->pushButton_5->setStyleSheet("background-image: url( " + GENERALPATH + "img/5.png);""background-repeat: no-repeat;""background-position: center; ");
+    qDebug()<< "file parse";
     OIFG = 1;
     STATEHS = 0;
     VOLUME = BASEVOLUME;
@@ -316,14 +329,28 @@ void MainWindow::TimeToInit() // INITIALISATION
     Recapok = 0;
     PingState = 0;
     ui->gridLayoutWidget->setGeometry(0,0,width,height);
-    ui->horizontalSpacer->changeSize(widthP*12,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
-    ui->horizontalSpacer_4->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
-    ui->horizontalSpacer_3->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
-    ui->horizontalSpacer_9->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
-    ui->horizontalSpacer_11->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
-    ui->verticalSpacer->changeSize(widthP*1,heightP * 15,QSizePolicy::Maximum,QSizePolicy::Maximum);
-    ui->verticalSpacer_2->changeSize(widthP*1,heightP * 10,QSizePolicy::Maximum,QSizePolicy::Maximum);
-    ui->verticalSpacer_3->changeSize(widthP*1,heightP * 15,QSizePolicy::Maximum,QSizePolicy::Maximum);
+    if (!TYPE)
+    {
+        ui->horizontalSpacer->changeSize(widthP*12,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_4->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_3->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_9->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_11->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->verticalSpacer->changeSize(widthP*1,heightP * 15,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->verticalSpacer_2->changeSize(widthP*1,heightP * 10,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->verticalSpacer_3->changeSize(widthP*1,heightP * 15,QSizePolicy::Maximum,QSizePolicy::Maximum);
+    }
+    else
+    {
+        ui->horizontalSpacer->changeSize(widthP*12,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_4->changeSize(widthP*2,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_3->changeSize(0,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_9->changeSize(0,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->horizontalSpacer_11->changeSize(0,heightP * 1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->verticalSpacer->changeSize(widthP*1,heightP * 4.5,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->verticalSpacer_2->changeSize(widthP*1,1,QSizePolicy::Maximum,QSizePolicy::Maximum);
+        ui->verticalSpacer_3->changeSize(widthP*1,heightP * 10,QSizePolicy::Maximum,QSizePolicy::Maximum);
+    }
     WIFISTATE = 0;
     LastDevice = "0";
 //    QProcess::execute("svc wifi disable");
@@ -605,6 +632,10 @@ void MainWindow::on_STOP_clicked()
 {
     VOLUME = BASEVOLUME;
     player->stop();
+    if (TYPE)
+    {
+        rfcomm->sendLine("$L" + IDMACHINE + IDPUPITRE + IDBPTABLETTE + "08");
+    }
 }
 
 MainWindow::~MainWindow()

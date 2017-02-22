@@ -100,7 +100,8 @@ private:
     QString     LastDevice;
     QString     DeviceRfcomm;
     int TeleCommandePresente;
-        QFuture<QString> t1;
+    QFuture<QString> t1;
+    int TYPE;
 
 };
 
