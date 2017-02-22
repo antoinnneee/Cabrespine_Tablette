@@ -11,12 +11,9 @@ int main(int argc, char *argv[])
 {
     QApplication    app(argc, argv);
 QBluetoothLocalDevice localDevice;
-    //  ==========================================================================
-<<<<<<< HEAD
-      //QProcess::execute("svc wifi enable"); // force wifi on on reset
-=======
-      QProcess::execute("svc wifi enable"); // force wifi on on reset
->>>>>>> 14727a39ef227ae2cf8b866cff327d715889ae90
+    //  ==========================================================================<<<<<<< HEAD
+      //QProcess::execute("svc wifi enable"); // force wifi on on reset=======
+      QProcess::execute("svc wifi enable"); // force wifi on on reset>>>>>>> 14727a39ef227ae2cf8b866cff327d715889ae90
       localDevice.powerOn();                // force bluetooth on reset
       QTime tempo;
           tempo.start();

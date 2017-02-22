@@ -310,7 +310,7 @@ void MainWindow::TimeToInit() // INITIALISATION
         TYPE = 1;
     else
         TYPE = 0;
-    fichierBK.close();
+//    fichierBK.close();
 
 
     QFile fichier4(GENERALPATH + "img/5.png");
